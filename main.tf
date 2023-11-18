@@ -21,9 +21,12 @@ data "aws_ami" "ubuntu" {
   owners = ["099720109477"] # Canonical
 }
 
-module "ec2-instance" {
-  source = "./modules/aws-ec2-instance"
+resource "aws_instance" "main" {
+  ami           = data.aws_ami.ubuntu.id
+  instance_type = var.instance_type
 
-  ami_id        = data.aws_ami.ubuntu.id
-  instance_name = "my_ec2_instance"
+  tags = {
+    Name  = "my-ec2-instance"
+    Owner = "${var.project_name}-tutorial"
+  }
 }
