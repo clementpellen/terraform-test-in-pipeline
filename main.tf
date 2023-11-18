@@ -5,8 +5,6 @@ provider "aws" {
   region = var.region
 }
 
-provider "random" {}
-
 data "aws_ami" "ubuntu" {
   most_recent = true
 
@@ -23,23 +21,9 @@ data "aws_ami" "ubuntu" {
   owners = ["099720109477"] # Canonical
 }
 
-resource "random_pet" "instance" {
-  length = 2
-}
-
 module "ec2-instance" {
   source = "./modules/aws-ec2-instance"
 
   ami_id        = data.aws_ami.ubuntu.id
-  instance_name = random_pet.instance.id
-}
-
-module "hello" {
-  source  = "joatmon08/hello/random"
-  version = "4.0.0"
-
-  hello        = "World"
-  second_hello = random_pet.instance.id
-
-  secret_key = "secret"
+  instance_name = "my_ec2_instance"
 }
