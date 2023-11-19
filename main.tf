@@ -21,20 +21,19 @@ data "aws_ami" "ubuntu" {
   owners = ["099720109477"] # Canonical
 }
 
-data "aws_instances" "main" {
+data "aws_instances" "vms_by_name" {
   filter {
     name   = "tag:Name"
     values = [var.instance_name]
   }
 }
 
-output "main" {
-  value = length(data.aws_instances.main.ids) > 0 ? "Instance found: ${data.aws_instances.main.ids[0]}" : "Instance '${var.instance_name}' not found."
+data "aws_instance" "vm_by_name" {
+  count       = length(data.aws_instances.vms_by_name.ids)
+  instance_id = data.aws_instances.vms_by_name.ids[count.index]
 }
 
-output "data_aws_instances_main_ids" {
-  value = data.aws_instances.main.ids
+output "vm_by_name_report" {
+  value = length(data.aws_instances.vms_by_name.ids) > 0 ? "Instances found: ${join(", ", data.aws_instances.vms_by_name.ids)}" : "Instance '${var.instance_name}' not found."
 }
-output "data_aws_instances_main" {
-  value = data.aws_instances.main
-}
+
