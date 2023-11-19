@@ -15,6 +15,14 @@ variable "project_name" {
   default = "terraform-init"
 }
 
+variable "instance_name" {
+  type        = string
+  description = "Name of the EC2 instance."
+
+  default = "my-ec2-instance"
+
+}
+
 variable "instance_type" {
   type        = string
   description = "Instance type for the EC2 instance."

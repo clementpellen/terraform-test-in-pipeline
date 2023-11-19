@@ -7,16 +7,23 @@ run "valid_instance_name" {
   command = plan
 
   assert {
-    condition     = aws_instance.main.tags["Name"] == var.instance_name
+    condition = anytrue([
+      for instance in data.aws_instances.main.ids : 
+        data.aws_instances.main.ids["instance"].tags["Name"] == var.instance_name
+    ])
     error_message = "Aucune instance ec2 nommée '${var.instance_name}' n'a été trouvée"
   }
 }
 
 # run "valid_ami_id" {
-#   command = "plan"
+#   command = plan
 
 #   assert {
-#     condition     = module.ec2-instance.main.ami == var.ami_id
-#     error_message = "AMI ID is not valid"
+#     condition = anytrue([
+#       for instance in data.aws_instances.main.ids : 
+#         data.aws_instances.main.ids["${instance}"].ami == var.ami_id
+#     ])
+#     error_message = "Aucune instance ec2 avec l'image AMI '${var.ami_id}' n'a été trouvée"
 #   }
 # }
+

@@ -21,12 +21,20 @@ data "aws_ami" "ubuntu" {
   owners = ["099720109477"] # Canonical
 }
 
-resource "aws_instance" "main" {
-  ami           = data.aws_ami.ubuntu.id
-  instance_type = var.instance_type
-
-  tags = {
-    Name  = "my-ec2-instance"
-    Owner = "${var.project_name}-tutorial"
+data "aws_instances" "main" {
+  filter {
+    name   = "tag:Name"
+    values = [var.instance_name]
   }
+}
+
+output "main" {
+  value = length(data.aws_instances.main.ids) > 0 ? "Instance found: ${data.aws_instances.main.ids[0]}" : "Instance '${var.instance_name}' not found."
+}
+
+output "data_aws_instances_main_ids" {
+  value = data.aws_instances.main.ids
+}
+output "data_aws_instances_main" {
+  value = data.aws_instances.main
 }
